@@ -77,6 +77,44 @@
             background: black;
         }
     </style>
+    <style>
+  body {
+    margin: 0;
+    background-color: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+
+  .container {
+    position: relative;
+    width: 320px;
+    height: 320px;
+  }
+
+  #fireCanvas {
+    position: absolute;
+    top: 0; left: 0;
+    width: 320px;
+    height: 320px;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .photo {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    object-fit: cover;
+    z-index: 3;
+    box-shadow: 0 0 20px 5px rgba(255, 140, 0, 0.8);
+  }
+    </style>
 </head>
 <body>
     <header class="hero">
@@ -92,6 +130,11 @@
     <video id="videoPlayer" controls src="celanatraining.mp4">
         Browser Anda tidak mendukung video.
     </video>
+
+    <div class="container">
+  <canvas id="fireCanvas" width="320" height="320"></canvas>
+  <img src="mas_gondrong.png" alt="Mas Gondrong" class="photo" />
+    </div>
 
     <script>
         const videoUploader = document.getElementById('videoUploader');
@@ -121,6 +164,89 @@
             videoPlayer.src = fileURL;
             videoPlayer.play();
         }
+    </script>
+    <script>
+  const canvas = document.getElementById('fireCanvas');
+  const ctx = canvas.getContext('2d');
+  const width = canvas.width;
+  const height = canvas.height;
+  const centerX = width / 2;
+  const centerY = height / 2;
+  const radius = 140;
+
+  // Partikel api melingkar
+  class FlameParticle {
+    constructor(angle) {
+      this.angle = angle; // posisi sudut partikel di lingkaran
+      this.radius = radius + (Math.random() * 15 - 7); // jarak dari pusat lingkaran
+      this.size = Math.random() * 12 + 8;
+      this.speedAngle = 0.002 + Math.random() * 0.002; // kecepatan putar
+      this.flameLength = 30 + Math.random() * 20; // panjang lidah api
+      this.offset = Math.random() * 1000; // offset animasi untuk variasi
+    }
+
+    update(time) {
+      this.angle += this.speedAngle;
+      // posisi partikel di lingkaran
+      this.x = centerX + this.radius * Math.cos(this.angle);
+      this.y = centerY + this.radius * Math.sin(this.angle);
+
+      // posisi ujung api menjilat ke tengah
+      // gerakan naik turun untuk efek berkobar
+      this.flameProgress = (Math.sin(time / 300 + this.offset) + 1) / 2; // 0..1
+    }
+
+    draw(ctx) {
+      // warna api dengan gradasi
+      const grad = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size * 2);
+      grad.addColorStop(0, `rgba(255, 200, 0, ${0.8 * this.flameProgress})`);
+      grad.addColorStop(0.5, `rgba(255, 100, 0, ${0.6 * this.flameProgress})`);
+      grad.addColorStop(1, 'rgba(0,0,0,0)');
+
+      ctx.fillStyle = grad;
+
+      // gambar lingkaran api
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+      ctx.fill();
+
+      // gambar lidah api menjilat ke tengah
+      ctx.beginPath();
+      ctx.moveTo(this.x, this.y);
+      const tipX = centerX + (this.radius - this.flameLength * this.flameProgress) * Math.cos(this.angle);
+      const tipY = centerY + (this.radius - this.flameLength * this.flameProgress) * Math.sin(this.angle);
+      ctx.lineTo(tipX, tipY);
+      ctx.lineWidth = this.size / 3;
+      ctx.strokeStyle = `rgba(255, 140, 0, ${0.7 * this.flameProgress})`;
+      ctx.shadowColor = `rgba(255, 140, 0, ${0.9 * this.flameProgress})`;
+      ctx.shadowBlur = 10;
+      ctx.stroke();
+
+      // reset shadow
+      ctx.shadowBlur = 0;
+    }
+  }
+
+  // Buat array partikel api
+  const particles = [];
+  const particleCount = 40;
+  for (let i = 0; i < particleCount; i++) {
+    particles.push(new FlameParticle((i / particleCount) * Math.PI * 2));
+  }
+
+  // Animasi loop
+  function animate(time = 0) {
+    ctx.clearRect(0, 0, width, height);
+
+    particles.forEach(p => {
+      p.update(time);
+      p.draw(ctx);
+    });
+
+    requestAnimationFrame(animate);
+  }
+
+  animate();
     </script>
 </body>
 </html>
