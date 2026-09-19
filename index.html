@@ -132,10 +132,11 @@
         Browser Anda tidak mendukung video.
     </video>
 
-    <div class="container">
-  <canvas id="fireCanvas" width="320" height="320"></canvas>
-  <img src="mas_gondrong.png" alt="Mas Gondrong" class="photo" />
-    </div>
+    <!-- Bungkus animasi dalam container khusus -->
+<div id="masGondrongAnimation" style="position: fixed; bottom: 20px; right: 20px; width: 320px; height: 320px; z-index: 9999;">
+  <canvas id="fireCanvas" width="320" height="320" style="border-radius: 50%;"></canvas>
+  <img src="mas_gondrong.png" alt="Mas Gondrong" class="photo" style="position: absolute; top: 50%; left: 50%; width: 280px; height: 280px; border-radius: 50%; transform: translate(-50%, -50%); object-fit: cover; box-shadow: 0 0 20px 5px rgba(255, 140, 0, 0.8); z-index: 2;">
+</div>
 
     <script>
         const videoUploader = document.getElementById('videoUploader');
