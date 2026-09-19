@@ -77,21 +77,24 @@
             background: black;
         }
         
+    /* Jangan ubah body agar background halaman tetap sama */
   body {
-    margin: 0;
-    background-color: #000;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+    /* Biarkan kosong atau sesuai halaman utama */
   }
 
-  .container {
-    position: relative;
+  /* Container animasi terpisah */
+  #masGondrongAnimation {
+    position: fixed; /* tetap di posisi layar */
+    bottom: 20px; /* bisa diubah sesuai kebutuhan */
+    right: 20px;
     width: 320px;
     height: 320px;
+    pointer-events: none; /* agar tidak menghalangi klik */
+    background: transparent; /* mengikuti background halaman */
+    z-index: 9999;
   }
 
+  /* Canvas untuk animasi api */
   #fireCanvas {
     position: absolute;
     top: 0; left: 0;
@@ -99,21 +102,22 @@
     height: 320px;
     border-radius: 50%;
     pointer-events: none;
-    z-index: 2;
+    z-index: 1;
   }
 
-  .photo {
+  /* Foto di tengah lingkaran */
+  #masGondrongAnimation img.photo {
     position: absolute;
     top: 50%;
     left: 50%;
-    width: 280px; /* ukuran foto lebih besar */
+    width: 280px; /* ukuran foto */
     height: 280px;
     border-radius: 50%;
     transform: translate(-50%, -50%);
     object-fit: cover;
-    z-index: 3;
-    box-sizing: border-box;
     box-shadow: 0 0 20px 5px rgba(255, 140, 0, 0.8);
+    z-index: 2;
+    pointer-events: auto; /* jika ingin foto bisa diinteraksi */
   }
     </style>
 </head>
@@ -132,10 +136,10 @@
         Browser Anda tidak mendukung video.
     </video>
 
-    <!-- Bungkus animasi dalam container khusus -->
-<div id="masGondrongAnimation" style="position: fixed; bottom: 20px; right: 20px; width: 320px; height: 320px; z-index: 9999;">
-  <canvas id="fireCanvas" width="320" height="320" style="border-radius: 50%;"></canvas>
-  <img src="mas_gondrong.png" alt="Mas Gondrong" class="photo" style="position: absolute; top: 50%; left: 50%; width: 280px; height: 280px; border-radius: 50%; transform: translate(-50%, -50%); object-fit: cover; box-shadow: 0 0 20px 5px rgba(255, 140, 0, 0.8); z-index: 2;">
+    <!-- Container animasi -->
+<div id="masGondrongAnimation">
+  <canvas id="fireCanvas" width="320" height="320"></canvas>
+  <img src="mas_gondrong.png" alt="Mas Gondrong" class="photo" />
 </div>
 
     <script>
